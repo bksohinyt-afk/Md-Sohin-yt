@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Service App</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+margin:0;
+}
+
+.header{
+background:#2c7be5;
+color:white;
+padding:15px;
+font-size:20px;
+}
+
+.container{
+margin-top:40px;
+}
+
+.btn{
+display:block;
+width:220px;
+margin:15px auto;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#28a745;
+color:white;
+}
+
+.payment{
+display:none;
+margin-top:30px;
+background:white;
+padding:20px;
+border-radius:10px;
+width:260px;
+margin-left:auto;
+margin-right:auto;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.paybtn{
+display:block;
+margin:10px auto;
+padding:10px;
+width:170px;
+border:none;
+border-radius:8px;
+background:#ff9800;
+color:white;
+font-size:16px;
+}
+
+input{
+padding:10px;
+margin:5px;
+width:90%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+📞 Admin Number: 01344031262
+</div>
+
+<div class="container">
+
+<button class="btn" onclick="showPayment('রং মিস্ত্রি')">রং মিস্ত্রি</button>
+<button class="btn" onclick="showPayment('টালি মিস্ত্রি')">টালি মিস্ত্রি</button>
+<button class="btn" onclick="showPayment('ছারপোকা দমন')">ছারপোকা দমন</button>
+
+<div class="payment" id="paymentBox">
+
+<h3 id="serviceName"></h3>
+<p>পেমেন্ট অপশন</p>
+
+<button class="paybtn" onclick="callAdmin()">কল করুন</button>
+<button class="paybtn" onclick="sendWhatsAppLocation()">WhatsApp লোকেশন</button>
+
+<hr>
+
+<input type="text" id="name" placeholder="আপনার নাম">
+<input type="text" id="address" placeholder="আপনার ঠিকানা">
+
+<button class="paybtn" onclick="saveBooking()">বুকিং সাবমিট</button>
+
+</div>
+</div>
+
+<script>
+
+function showPayment(service){
+document.getElementById("paymentBox").style.display="block";
+document.getElementById("serviceName").innerText="সার্ভিস: "+service;
+}
+
+function callAdmin(){
+window.location.href="tel:01344031262";
+}
+
+function sendWhatsAppLocation(){
+
+if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(function(pos){
+
+let lat=pos.coords.latitude;
+let lon=pos.coords.longitude;
+
+let link="https://maps.google.com/?q="+lat+","+lon;
+
+let number="8801344031262";
+
+window.open("https://wa.me/"+number+"?text=আমার লোকেশন: "+link);
+
+});
+}
+else{
+alert("লোকেশন পাওয়া যায়নি");
+}
+}
+
+function saveBooking(){
+
+let name=document.getElementById("name").value;
+let address=document.getElementById("address").value;
+let service=document.getElementById("serviceName").innerText;
+
+if(name==""||address==""){
+alert("সব তথ্য দিন");
+return;
+}
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+let booking={
+name:name,
+address:address,
+service:service,
+lat:pos.coords.latitude,
+lon:pos.coords.longitude,
+time:new Date().toLocaleString()
+};
+
+let data=JSON.parse(localStorage.getItem("orders"))||[];
+data.push(booking);
+localStorage.setItem("orders",JSON.stringify(data));
+
+alert("বুকিং সফল হয়েছে ✅");
+
+});
+}
+
+</script>
+
+</body>
+</html>
